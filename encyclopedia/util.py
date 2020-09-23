@@ -1,7 +1,11 @@
 import re
-
+import random
+import glob
+import os 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+
+
 
 
 def list_entries():
@@ -25,6 +29,8 @@ def save_entry(title, content):
     default_storage.save(filename, ContentFile(content))
 
 
+
+
 def get_entry(title):
     """
     Retrieves an encyclopedia entry by its title. If no such
@@ -35,3 +41,11 @@ def get_entry(title):
         return f.read().decode("utf-8")
     except FileNotFoundError:
         return None
+
+def get_random_entry():
+    arr = list_entries()
+    length = len(arr)
+    rand_num = random.randrange(0, length)
+    return arr[rand_num]
+
+    

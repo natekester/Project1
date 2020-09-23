@@ -8,8 +8,13 @@
     
     
     {{ entry |safe}}
-    
-        
+
+
+    <form action="{% url 'edit_redirect' %}" method="post">
+        {% csrf_token %}
+        <input type = "hidden" name="id" id="id" value={{entry_name}}>
+        <input type="submit" value="edit">
+    </form>
     
 
 {% endblock %}
