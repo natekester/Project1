@@ -88,21 +88,11 @@ def get_entry(request, name):
             "search_form": search_form
         })
 
-def edit_redirect(request):
+def edit_redirect(request, name):
     print("starting redirect")
-    if request.method == "POST" :
-        name = request.POST.get("id")
-        print("redirecting to edit: "+ name)
-    
 
-        
-        return redirect(f"edit/{name}")
-    else:
-        search_form = SearchForm()
-        return render(request, "encyclopedia/index.html", {
-            
-            "search_form": search_form
-        })
+    return redirect(f'edit/{name}')
+    
 
 
 def make_entry(request):
@@ -160,35 +150,47 @@ def random_entry(request):
     
     return redirect(f"wiki/{name}")
 
-def edit_wiki(request, wiki_name):
+def edit(request, wiki_name):
     
     if(request.method == "POST"):
-        #TODO edit the actual .md file
-         print('we just recieved the POST method to edit the page')
-         for key, value in request.POST.items():
-            print('Key: %s' % (key) ) 
-  
-            print('Value: %s' % (value) )
+        if 'id' in request.POST:
+            search_form = SearchForm()
+            print(wiki_name + " is the name for this page.")
+            text = util.get_entry(wiki_name)
 
-         text = str(request.POST.get("Text"))
-         print("the text we recovered: "+ str(text))
-         
-         with open(f'entries/{wiki_name}.md',"w") as filetowrite:
-            filetowrite.write(text)
-            filetowrite.close()
+            return render(request, "encyclopedia/edit.html", {
+                "search_form": search_form,
+                "wiki_name": wiki_name,
+                "text": text
+            })
+        else:
+            print('we just recieved the POST method to edit the page')
+            print(str(request.POST.get("id")))
 
-         
-         print(wiki_name + " is the name of the edited wiki before redirect")
-         
+            for key, value in request.POST.items():
+                print('Key: %s' % (key) ) 
+    
+                print('Value: %s' % (value) )
 
-         return redirect(f'/wiki/{wiki_name}')
+            text = str(request.POST.get("Text"))
+            print("the text we recovered: "+ str(text))
+            
+            with open(f'entries/{wiki_name}.md',"w") as filetowrite:
+                filetowrite.write(text)
+                filetowrite.close()
+
+            
+            print(wiki_name + " is the name of the edited wiki before redirect")
+            
+
+            return redirect(f'/wiki/{wiki_name}')
 
     else:
         search_form = SearchForm()
         print(wiki_name + " is the name for this page.")
         text = util.get_entry(wiki_name)
 
-        return render(request, "encyclopedia/edit_wiki.html", {
+        return render(request, "encyclopedia/edit.html", {
             "search_form": search_form,
             "wiki_name": wiki_name,
             "text": text
